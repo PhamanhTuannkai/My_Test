@@ -18,11 +18,23 @@
 					},
 					"phone": {
 						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"admin",
+							"staff",
+							"user"
+						]
+					},
+					"branchId": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"id",
-					"name"
+					"name",
+					"role"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -61,6 +73,101 @@
 					"errorDetail",
 					"resultApi",
 					"total"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NotifyType": {
+				"type": "string",
+				"enum": [
+					"market",
+					"food"
+				]
+			},
+			"NotifyLevel": {
+				"type": "string",
+				"enum": [
+					"global",
+					"branch",
+					"user"
+				]
+			},
+			"NotifyDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/NotifyType"
+					},
+					"level": {
+						"$ref": "#/components/schemas/NotifyLevel"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"branchId": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"readBy": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"message",
+					"type",
+					"level",
+					"createdBy",
+					"readBy",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateNotifyDto": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/NotifyType"
+					},
+					"level": {
+						"$ref": "#/components/schemas/NotifyLevel"
+					},
+					"branchId": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"message",
+					"type",
+					"level"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -130,6 +237,183 @@
 						}
 					}
 				}
+			}
+		},
+		"/notifies": {
+			"post": {
+				"operationId": "CreateNotify",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/NotifyDto"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notify"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateNotifyDto"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetNotifies",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {
+												"$ref": "#/components/schemas/NotifyDto"
+											},
+											"type": "array"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notify"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/notifies/{id}": {
+			"get": {
+				"operationId": "GetNotifyById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/NotifyDto"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notify"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/notifies/{id}/read": {
+			"post": {
+				"operationId": "MarkAsRead",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/NotifyDto"
+										},
+										{
+											"properties": {
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Notify"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},

@@ -5,14 +5,13 @@ import {
   Get,
   Path,
   Post,
-  Put,
   Request,
   Route,
   Tags,
 } from "tsoa";
-import { INotify } from "../model/type/notify.type";
 import * as notifyService from "../service/notify.service";
 import { User } from "../model/entities/user.entities";
+import { CreateNotifyDto, NotifyDto } from "../model/dto/dto-notify.dto";
 
 @Route("notifies")
 @Tags("Notify")
@@ -22,7 +21,10 @@ export class NotifyController extends Controller {
   }
 
   @Post("/")
-  public async createNotify(@Body() data: INotify, @Request() req: Request) {
+  public async createNotify(
+    @Body() data: CreateNotifyDto,
+    @Request() req: Request
+  ): Promise<NotifyDto | { message: string }> {
     const user = this.getUserFromRequest(req);
     if (!user || user.role !== "admin") {
       this.setStatus(403);
@@ -34,18 +36,22 @@ export class NotifyController extends Controller {
   }
 
   @Get("/")
-  public async getNotifies(@Request() req: Request) {
+  public async getNotifies(
+    @Request() req: Request
+  ): Promise<NotifyDto[] | { message: string }> {
     const user = this.getUserFromRequest(req);
     if (!user) {
       this.setStatus(401);
-      return { message: "Unauthorized" };
+      return [];
     }
     const notifies = await notifyService.getNotifiesForUser(user);
     return notifies;
   }
 
   @Get("{id}")
-  public async getNotifyById(@Path() id: string) {
+  public async getNotifyById(
+    @Path() id: string
+  ): Promise<NotifyDto | { message: string }> {
     const notify = await notifyService.getNotifyById(id);
     if (!notify) {
       this.setStatus(404);
@@ -54,18 +60,23 @@ export class NotifyController extends Controller {
     return notify;
   }
 
-  @Delete("{id}")
-  public async deleteNotify(@Path() id: string, @Request() req: Request) {
+  @Post("{id}/read")
+  public async markAsRead(
+    @Path() id: string,
+    @Request() req: Request
+  ): Promise<NotifyDto | { message: string }> {
     const user = this.getUserFromRequest(req);
-    if (!user || user.role !== "admin") {
-      this.setStatus(403);
-      return { message: "Permission denied: only admin can delete notify" };
+    if (!user) {
+      this.setStatus(401);
+      return { message: "Unauthorized" };
     }
-    const notify = await notifyService.deleteNotify(id, user);
-    if (!notify) {
+
+    const updated = await notifyService.markNotifyAsRead(id, user);
+    if (!updated) {
       this.setStatus(404);
       return { message: "Notify not found" };
     }
-    return { message: "Notify deleted" };
+
+    return updated;
   }
 }
