@@ -8,11 +8,13 @@ export async function createNotify(
   data: CreateNotifyDto,
   user: User
 ): Promise<NotifyDto> {
-  if (user.role !== "admin") throw new Error("Permission denied");
+  if (!["admin", "branch-admin"].includes(user.role))
+    throw new Error("Permission denied");
 
   const notify = new Notify({
     ...data,
     createdBy: user.id,
+    branchId: user.role === "branch-admin" ? user.branchId : data.branchId,
     createdAt: new Date(),
     readBy: [],
   });

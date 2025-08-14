@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   phone?: string;
   role: 'admin' | 'branch-admin' | 'staff' | 'user';

@@ -26,9 +26,12 @@ export class NotifyController extends Controller {
     @Request() req: Request
   ): Promise<NotifyDto | { message: string }> {
     const user = this.getUserFromRequest(req);
-    if (!user || user.role !== "admin") {
+    if (!user || !["admin", "branch-admin"].includes(user.role)) {
       this.setStatus(403);
-      return { message: "Permission denied: only admin can create notify" };
+      return {
+        message:
+          "Permission denied: only admin or branch-admin can create notify",
+      };
     }
     const notify = await notifyService.createNotify(data, user);
     this.setStatus(201);

@@ -1,33 +1,24 @@
 import { User } from "../model/entities/user.entities";
 
 export function canViewNotify(user: User, notify: any): boolean {
-  // 1. Global
+  const sameBranch = user.branchId && user.branchId === notify.branchId;
+  const sameUser = notify.userId && notify.userId === user.id.toString();
+
   if (notify.level === "global") return true;
 
-  // 2. Branch-level
   if (notify.level === "branch") {
     if (user.role === "admin") return true;
-    if (
-      ["staff", "branch-admin"].includes(user.role) &&
-      user.branchId === notify.branchId
-    )
+    if (["staff", "branch-admin"].includes(user.role) && sameBranch)
       return true;
   }
 
-  // 3. User-level
-  if (notify.level === "user" && notify.userId === user.id.toString())
-    return true;
+  if (notify.level === "user" && sameUser) return true;
 
-  // 4. Food-type
   if (notify.type === "food") {
+    if (["branch-admin", "staff"].includes(user.role) && sameBranch)
+      return true;
     if (user.role === "admin") return true;
-    if (
-      ["staff", "branch-admin"].includes(user.role) &&
-      user.branchId === notify.branchId
-    )
-      return true;
-    if (user.role === "user" && notify.userId === user.id.toString())
-      return true;
+    if (user.role === "user" && sameUser) return true;
   }
 
   return false;

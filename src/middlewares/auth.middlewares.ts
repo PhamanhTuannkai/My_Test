@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import { User } from "../model/entities/user.entities";
 
 export interface AuthRequest extends Request {
@@ -12,27 +11,26 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      req.user = {
-        id: 1,
-        name: "adminUser",
-        role: "admin",
-      } as User;
-      return next();
-    }
+    const userId = req.query.userId as string;
 
-    const token = authHeader.split(" ")[1];
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new Error("JWT_SECRET not configured");
-    }
+    const users: Record<string, User> = {
+      "1": { id: "1", name: "Super Admin", role: "admin" },
+      "2": { id: "2", name: "Branch Admin B1", role: "branch-admin", branchId: "b1" },
+      "3": { id: "3", name: "Staff B1", role: "staff", branchId: "b1" },
+      "4": { id: "4", name: "Staff B2", role: "staff", branchId: "b2" },
+      "u1": { id: "u1", name: "User 1", role: "user" },
+      "u2": { id: "u2", name: "User 2", role: "user" },
+    };
 
-    const payload = jwt.verify(token, secret) as User;
-    req.user = payload;
+    if (userId && users[userId]) {
+      req.user = users[userId];
+    } else {
+
+      req.user = users["1"];
+    }
 
     next();
-  } catch (error: any) {
-    return res.status(401).json({ message: "Unauthorized: " + error.message });
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized: " + error });
   }
 };
