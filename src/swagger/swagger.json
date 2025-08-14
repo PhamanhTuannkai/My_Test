@@ -23,6 +23,7 @@
 						"type": "string",
 						"enum": [
 							"admin",
+							"branch-admin",
 							"staff",
 							"user"
 						]

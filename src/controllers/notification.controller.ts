@@ -50,14 +50,26 @@ export class NotifyController extends Controller {
 
   @Get("{id}")
   public async getNotifyById(
-    @Path() id: string
+    @Path() id: string,
+    @Request() req: Request
   ): Promise<NotifyDto | { message: string }> {
-    const notify = await notifyService.getNotifyById(id);
-    if (!notify) {
-      this.setStatus(404);
-      return { message: "Notify not found" };
+    const user = this.getUserFromRequest(req);
+    if (!user) {
+      this.setStatus(401);
+      return { message: "Unauthorized" };
     }
-    return notify;
+
+    try {
+      const notify = await notifyService.getNotifyById(id, user);
+      if (!notify) {
+        this.setStatus(404);
+        return { message: "Notify not found" };
+      }
+      return notify;
+    } catch (err) {
+      this.setStatus(403);
+      return { message: "Permission denied" };
+    }
   }
 
   @Post("{id}/read")

@@ -20,7 +20,7 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"double","required":true},
             "name": {"dataType":"string","required":true},
             "phone": {"dataType":"string"},
-            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["staff"]},{"dataType":"enum","enums":["user"]}],"required":true},
+            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["branch-admin"]},{"dataType":"enum","enums":["staff"]},{"dataType":"enum","enums":["user"]}],"required":true},
             "branchId": {"dataType":"string"},
         },
         "additionalProperties": false,

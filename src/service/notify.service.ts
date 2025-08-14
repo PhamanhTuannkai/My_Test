@@ -28,6 +28,20 @@ export async function getNotifiesForUser(user: User): Promise<NotifyDto[]> {
     .map(toNotifyDto);
 }
 
+export async function getNotifyById(
+  id: string,
+  user: User
+): Promise<NotifyDto | null> {
+  const notify = await Notify.findById(id);
+  if (!notify) return null;
+
+  if (!canViewNotify(user, notify)) {
+    throw new Error("Permission denied");
+  }
+
+  return toNotifyDto(notify);
+}
+
 export async function markNotifyAsRead(
   notifyId: string,
   user: User
