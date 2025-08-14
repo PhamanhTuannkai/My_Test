@@ -1,4 +1,4 @@
-export type NotifyType = "market" | "food";
+export type NotifyType = "market" | "food" | "other";
 export type NotifyLevel = "global" | "branch" | "user";
 
 export interface NotifyDto {

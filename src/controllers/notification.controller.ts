@@ -40,22 +40,16 @@ export class NotifyController extends Controller {
   }
 
   @Get("/")
-  public async getNotifies(
-    @Request() req: Request,
-    @Query() type?: string
-  ): Promise<NotifyDto[] | { message: string }> {
+  public async getNotifies(@Request() req: any): Promise<NotifyDto[]> {
     const user = this.getUserFromRequest(req);
     if (!user) {
       this.setStatus(401);
       return [];
     }
 
-    let notifies = await notifyService.getNotifiesForUser(user);
+    const type = req.query?.type;
 
-    if (type) {
-      notifies = notifies.filter((n) => n.type === type);
-    }
-
+    const notifies = await notifyService.getNotifiesForUser(user, type);
     return notifies;
   }
 

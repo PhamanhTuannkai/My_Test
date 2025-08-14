@@ -23,12 +23,23 @@ export async function createNotify(
   return toNotifyDto(saved);
 }
 
-export async function getNotifiesForUser(user: User): Promise<NotifyDto[]> {
+export async function getNotifiesForUser(
+  user: User,
+  type?: string
+): Promise<NotifyDto[]> {
   const allNotifies = await Notify.find().sort({ createdAt: -1 });
-  return allNotifies
-    .filter((notify) => canViewNotify(user, notify))
-    .map(toNotifyDto);
+
+  let filteredNotifies = allNotifies;
+  
+  if (type) {
+    filteredNotifies = allNotifies.filter((n) => n.type === type);
+  } else {
+    filteredNotifies = allNotifies.filter((n) => canViewNotify(user, n));
+  }
+
+  return filteredNotifies.map(toNotifyDto);
 }
+
 
 export async function getNotifyById(
   id: string,

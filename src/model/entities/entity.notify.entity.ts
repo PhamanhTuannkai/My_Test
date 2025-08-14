@@ -4,7 +4,7 @@ import { INotify } from "../type/notify.type";
 const NotifySchema = new Schema<INotify & Document>({
   title: { type: String, required: true },
   message: { type: String, required: true },
-  type: { type: String, enum: ["market", "food"], required: true },
+  type: { type: String, enum: ["market", "food", "other"], required: true },
   level: { type: String, enum: ["global", "branch", "user"], required: true },
   createdBy: { type: String, required: true },
   branchId: { type: String },

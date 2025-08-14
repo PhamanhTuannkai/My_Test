@@ -81,7 +81,8 @@
 				"type": "string",
 				"enum": [
 					"market",
-					"food"
+					"food",
+					"other"
 				]
 			},
 			"NotifyLevel": {
@@ -293,25 +294,10 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"anyOf": [
-										{
-											"items": {
-												"$ref": "#/components/schemas/NotifyDto"
-											},
-											"type": "array"
-										},
-										{
-											"properties": {
-												"message": {
-													"type": "string"
-												}
-											},
-											"required": [
-												"message"
-											],
-											"type": "object"
-										}
-									]
+									"items": {
+										"$ref": "#/components/schemas/NotifyDto"
+									},
+									"type": "array"
 								}
 							}
 						}
