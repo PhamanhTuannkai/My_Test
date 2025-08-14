@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import routes from "../routes/router-module";
 import { setupSwagger } from "./swagger";
 import { authMiddleware } from "../middlewares/auth.middlewares";
-import "../common/notify.cleanup";
+// import "../common/notify.cleanup";
 
 dotenv.config();
 

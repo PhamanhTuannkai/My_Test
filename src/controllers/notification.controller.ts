@@ -5,6 +5,7 @@ import {
   Get,
   Path,
   Post,
+  Query,
   Request,
   Route,
   Tags,
@@ -40,14 +41,21 @@ export class NotifyController extends Controller {
 
   @Get("/")
   public async getNotifies(
-    @Request() req: Request
+    @Request() req: Request,
+    @Query() type?: string
   ): Promise<NotifyDto[] | { message: string }> {
     const user = this.getUserFromRequest(req);
     if (!user) {
       this.setStatus(401);
       return [];
     }
-    const notifies = await notifyService.getNotifiesForUser(user);
+
+    let notifies = await notifyService.getNotifiesForUser(user);
+
+    if (type) {
+      notifies = notifies.filter((n) => n.type === type);
+    }
+
     return notifies;
   }
 

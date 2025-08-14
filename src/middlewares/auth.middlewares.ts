@@ -26,7 +26,7 @@ export const authMiddleware = (
       req.user = users[userId];
     } else {
 
-      req.user = users["1"];
+      req.user = users["u1"];
     }
 
     next();
